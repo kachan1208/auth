@@ -17,11 +17,15 @@ func GenerateUUID() string {
 }
 
 func GenerateRandomString(size int) string {
-	str := make([]byte, size)
+	str := make([]byte, size*2)
 	_, err := rand.Read(str)
 	if err != nil {
 		panic(err)
 	}
 
 	return hex.EncodeToString(str)
+}
+
+func GenerateZeros(size int) string {
+	return string(make([]byte, size)[:])
 }

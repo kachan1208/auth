@@ -40,27 +40,34 @@ func (t *TokenRepo) GetToken(token string) (*model.Token, error) {
 	if err == gocql.ErrNotFound {
 		err = api.ErrNotFound
 	}
+
 	return result, err
 }
 
 func (t *TokenRepo) CreateToken(token *model.Token) error {
 	token.ID = GenerateUUID()
-	token.Token = GenerateRandomString(64)
+	token.Token = GenerateRandomString(32)
 
-	err := t.db.Query(`
+	return t.db.Query(`
 		INSERT INTO token(
 			id,
 			account_id,
+			token,
 			created_at,
 			deleted_at,
-		) VALUES(?,?,DATEOF(NOW()),'') 
-		`, token.Token).
-		Scan(
-			&token.ID,
-			&token.AccountID,
-			&token.CreatedAt,
-			&token.DeletedAt,
-		)
+		) VALUES(?,?,?,DATEOF(NOW()),'')`, 
+			token.ID, 
+			token.AccountID, 
+			token.Token).
+}
 
-	return err
+
+func (t *TokenRepo) DeleteToken(tokenID string) error {
+	return t.db.Query(`
+		UPDATE token
+		SET 
+			deleted_at = DATEOF(NOW())
+			token = ?, 
+		WHERE
+			id = ?`, GenerateZeros(32), tokenID)
 }

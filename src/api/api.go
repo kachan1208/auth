@@ -15,3 +15,8 @@ type CreateTokenReq struct {
 type CreateTokenResp struct {
 	Token string `json:"token"`
 }
+
+type DeleteTokenReq struct {
+	ID string
+	AccountID string
+}
