@@ -17,7 +17,7 @@ func GenerateUUID() string {
 }
 
 func GenerateRandomString(size int) string {
-	str := make([]byte, size*2)
+	str := make([]byte, size)
 	_, err := rand.Read(str)
 	if err != nil {
 		panic(err)

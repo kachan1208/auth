@@ -5,11 +5,11 @@ import (
 )
 
 type Token struct {
-	ID        string
-	AccountID string
-	Token     string
-	CreatedAt time.Time
-	DeletedAt time.Time
+	ID        string    `json:"id"`
+	AccountID string    `json:"-"`
+	Token     string    `json:"token"`
+	CreatedAt time.Time `json:"created_at"`
+	DeletedAt time.Time `json:"-"`
 }
 
 func (t *Token) IsDeleted() bool {

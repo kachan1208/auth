@@ -1,44 +1,29 @@
 package controller
 
 import (
-	"context"
-
-	"github.com/kachan1208/auth/src/dao"
 	"github.com/kachan1208/auth/src/api"
+	"github.com/kachan1208/auth/src/dao"
+	"github.com/kachan1208/auth/src/model"
 )
 
 type Controller struct {
 	repo *dao.TokenRepo
 }
 
-func NewController(repo *dao.TokenRepository) *Controller {
+func NewController(repo *dao.TokenRepo) *Controller {
 	return &Controller{
 		repo: repo,
 	}
 }
 
-func (c *Controller) AuthByToken(ctx context.Context, req *api.AuthByTokenReq) (*model.Token, error) {
-	token, err := c.repo.GetToken(req.Token)
-	
-	return token, err
+func (c *Controller) AuthByToken(req *api.AuthByTokenReq) (*model.Token, error) {
+	return c.repo.GetToken(req.Token)
 }
 
-func (c *Controller) CreateToken(ctx context.Context, req *api.CreateTokenReq) (*model.Token, error) {
-	token, err := c.repo.CreateToken(req.AccountID)
-
-	return token, err
+func (c *Controller) CreateToken(req *api.CreateTokenReq) (*model.Token, error) {
+	return c.repo.CreateToken(req.AccountID)
 }
 
-
-func (c *Controller) DeleteToken(ctx context.Context, req *api.CreateTokenReq) error {
-	token, err := c.repo.GetToken(req.ID)
-	if err != nil {
-		return err
-	}
-
-	if token.AccountID != req.AccountID {
-		return api.ErrAccountIDMistmatch
-	}
-
-	return c.repo.DeleteToken(req.ID)
+func (c *Controller) DeleteToken(req *api.DeleteTokenReq) error {
+	return c.repo.DeleteToken(req.ID, req.AccountID)
 }

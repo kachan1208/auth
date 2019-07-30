@@ -28,8 +28,8 @@ func (t *TokenRepo) GetToken(token string) (*model.Token, error) {
 			account_id, 
 			created_at, 
 			deleted_at 
-		FROM token 
-		WHERE token = ?`, result.Token).
+		FROM api_token 
+		WHERE api_token = ?`, result.Token).
 		Scan(
 			&result.ID,
 			&result.AccountID,
@@ -41,33 +41,36 @@ func (t *TokenRepo) GetToken(token string) (*model.Token, error) {
 		err = api.ErrNotFound
 	}
 
-	return result, err
+	return &result, err
 }
 
-func (t *TokenRepo) CreateToken(token *model.Token) error {
-	token.ID = GenerateUUID()
-	token.Token = GenerateRandomString(32)
+func (t *TokenRepo) CreateToken(accountID string) (*model.Token, error) {
+	token := &model.Token{
+		ID:        GenerateUUID(),
+		AccountID: accountID,
+		Token:     GenerateRandomString(32),
+	}
 
-	return t.db.Query(`
-		INSERT INTO token(
+	return token, t.db.Query(`
+		INSERT INTO api_token(
 			id,
 			account_id,
-			token,
+			api_token,
 			created_at,
-			deleted_at,
-		) VALUES(?,?,?,DATEOF(NOW()),'')`, 
-			token.ID, 
-			token.AccountID, 
-			token.Token).
+			deleted_at
+		) VALUES(?,?,?,DATEOF(NOW()),'')`,
+		token.ID,
+		token.AccountID,
+		token.Token).Exec()
 }
 
-
-func (t *TokenRepo) DeleteToken(tokenID string) error {
+func (t *TokenRepo) DeleteToken(tokenID string, accountID string) error {
 	return t.db.Query(`
-		UPDATE token
+		UPDATE api_token
 		SET 
 			deleted_at = DATEOF(NOW())
-			token = ?, 
+			api_token = ?, 
 		WHERE
-			id = ?`, GenerateZeros(32), tokenID)
+			id = ?
+		AND account_id = ?`, GenerateZeros(32), tokenID, accountID).Exec()
 }

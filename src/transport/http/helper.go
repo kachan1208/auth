@@ -1,5 +1,19 @@
 package http
 
+import (
+	"context"
+	"encoding/base64"
+	"encoding/json"
+	"io"
+	"io/ioutil"
+	"net/http"
+
+	"golang.org/x/xerrors"
+
+	"github.com/kachan1208/auth/src/api"
+	"github.com/kachan1208/auth/src/transport/http/errors"
+)
+
 func unmarshalJSON(reader io.Reader, obj interface{}) error {
 	body, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -16,15 +30,13 @@ func unmarshalJSON(reader io.Reader, obj interface{}) error {
 	return nil
 }
 
-
-var httpErr *errors.HTTPError
 func handleError(ctx context.Context, err error, w http.ResponseWriter) {
-	if err != nil && xerrors.As(err, httpErr) {
-		w.SetStatus(err.StatusCode)
-			
+	var httpErr errors.HTTPError
+	if err != nil && xerrors.As(err, &httpErr) {
+		w.WriteHeader(httpErr.StatusCode)
+		w.Write([]byte(err.Error()))
 	} else {
-		w.SetStatus(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"code":10000, "message": "internal server error"}`))
 	}
-
-	w.Write(err.Error())
 }

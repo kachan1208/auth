@@ -1,16 +1,18 @@
 package errors
 
+import "fmt"
+
 type HTTPError struct {
 	StatusCode int
-	Code int
-	Message string
+	Code       int
+	Message    string
 }
 
 func NewHTTPError(statusCode, code int, msg string) error {
 	return HTTPError{
 		StatusCode: statusCode,
-		Code: code,
-		Message: msg,
+		Code:       code,
+		Message:    msg,
 	}
 }
 
