@@ -7,7 +7,6 @@ import (
 )
 
 type config struct {
-	LogLevel          string `envconfig:"LOG_LEVEL" required:"true"`
 	HTTPAddress       string `envconfig:"HTTP_ADDRESS" required:"true"`
 	CassandraHost     string `envconfig:"CASSANDRA_HOST" required:"true"`
 	CassandraPort     int    `envconfig:"CASSANDRA_PORT" required:"true"`

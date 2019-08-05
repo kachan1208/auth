@@ -67,7 +67,7 @@ func initLogger() log.Logger {
 	logger = log.NewSyncLogger(logger)
 	logger = level.NewFilter(logger, level.AllowDebug())
 	logger = log.With(logger,
-		"svc", "order",
+		"service", "auth",
 		"ts", log.DefaultTimestampUTC,
 		"caller", log.DefaultCaller,
 	)
