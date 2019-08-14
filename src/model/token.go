@@ -7,7 +7,8 @@ import (
 type Token struct {
 	ID        string    `json:"id"`
 	AccountID string    `json:"-"`
-	Token     string    `json:"token"`
+	IsEnabled bool      `json:"is_enabled"`
+	Token     string    `json:"token,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	DeletedAt time.Time `json:"-"`
 }

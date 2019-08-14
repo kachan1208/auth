@@ -48,4 +48,10 @@ var (
 		4006,
 		"token can't be removed, invalid 'Account-Id' header",
 	)
+
+	ErrTokenIsDisabled = errors.NewHTTPError(
+		http.StatusBadRequest,
+		4007,
+		"token disabled",
+	)
 )

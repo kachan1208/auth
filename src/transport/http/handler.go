@@ -14,9 +14,11 @@ import (
 )
 
 const (
-	RouteAuthByToken = "/token/auth"
-	RouteCreateToken = "/token"
-	RouteDeleteToken = "/token/{id}"
+	RouteAuthByToken = "/v1/token/auth"
+	RouteCreateToken = "/v1/token"
+	RouteUpdateToken = "/v1/token/{id}"
+	RouteDeleteToken = "/v1/token/{id}"
+	RouteTokenList   = "/v1/token/list"
 	RouteHealth      = "/health"
 )
 
@@ -55,6 +57,30 @@ func NewHandler(address string, logger log.Logger, c *controller.Controller) *Ha
 		marshalDeleteTokenResp,
 		options...,
 	)
+	tokenList := transport.NewServer(
+		func(ctx context.Context, request interface{}) (interface{}, error) {
+			return c.TokenList(request.(*api.TokenListReq))
+		},
+		unmarshalTokenListReq,
+		marshalTokenListResp,
+		options...,
+	)
+	updateToken := transport.NewServer(
+		func(ctx context.Context, request interface{}) (interface{}, error) {
+			return nil, c.UpdateToken(request.(*api.UpdateTokenReq))
+		},
+		unmarshalUpdateTokenReq,
+		marshalUpdateTokenResp,
+		options...,
+	)
+	getToken := transport.NewServer(
+		func(ctx context.Context, request interface{}) (interface{}, error) {
+			return c.GetToken(request.(*api.GetTokenReq))
+		},
+		unmarshalGetTokenReq,
+		marshalGetTokenResp,
+		options...,
+	)
 
 	health := transport.NewServer(
 		func(ctx context.Context, request interface{}) (interface{}, error) {
@@ -74,6 +100,10 @@ func NewHandler(address string, logger log.Logger, c *controller.Controller) *Ha
 	router.Methods("POST").Path(RouteAuthByToken).Handler(authByToken)
 	router.Methods("POST").Path(RouteCreateToken).Handler(createToken)
 	router.Methods("DELETE").Path(RouteDeleteToken).Handler(deleteToken)
+	router.Methods("PUT").Path(RouteUpdateToken).Handler(updateToken)
+	router.Methods("GET").Path(RouteTokenList).Handler(tokenList)
+	router.Methods("GET").Path(RouteTokenList).Handler(getToken)
+
 	router.Methods("GET").Path(RouteHealth).Handler(health)
 
 	return &Handler{
@@ -143,4 +173,74 @@ func marshalDeleteTokenResp(ctx context.Context, w http.ResponseWriter, response
 
 	w.WriteHeader(http.StatusOK)
 	return nil
+}
+
+func unmarshalGetTokenReq(_ context.Context, r *http.Request) (request interface{}, err error) {
+	req := api.GetTokenReq{}
+	req.AccountID = r.Header.Get("Account-Id")
+	if req.AccountID == "" || len(req.AccountID) != 32 {
+		return nil, api.ErrAccountIDIsNotSet
+	}
+
+	req.ID = mux.Vars(r)["id"]
+	if len(req.ID) != 32 {
+		return nil, api.ErrTokenIDIsInvalid
+	}
+
+	return &req, nil
+}
+
+func marshalGetTokenResp(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	if err, ok := response.(error); ok {
+		handleError(ctx, err, w)
+		return err
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return json.NewEncoder(w).Encode(response)
+}
+
+func unmarshalUpdateTokenReq(_ context.Context, r *http.Request) (request interface{}, err error) {
+	req := api.UpdateTokenReq{}
+	req.AccountID = r.Header.Get("Account-Id")
+	if req.AccountID == "" || len(req.AccountID) != 32 {
+		return nil, api.ErrAccountIDIsNotSet
+	}
+
+	req.ID = mux.Vars(r)["id"]
+	if len(req.ID) != 32 {
+		return nil, api.ErrTokenIDIsInvalid
+	}
+
+	return &req, nil
+}
+
+func marshalUpdateTokenResp(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	if err, ok := response.(error); ok {
+		handleError(ctx, err, w)
+		return err
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return nil
+}
+
+func unmarshalTokenListReq(_ context.Context, r *http.Request) (request interface{}, err error) {
+	req := api.TokenListReq{}
+	req.AccountID = r.Header.Get("Account-Id")
+	if req.AccountID == "" || len(req.AccountID) != 32 {
+		return nil, api.ErrAccountIDIsNotSet
+	}
+
+	return &req, nil
+}
+
+func marshalTokenListResp(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	if err, ok := response.(error); ok {
+		handleError(ctx, err, w)
+		return err
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return json.NewEncoder(w).Encode(response)
 }

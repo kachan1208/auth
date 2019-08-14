@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS api_token (
     account_id text,
     api_token text,
     created_at timestamp,
+    is_enabled boolean,
     deleted_at timestamp,
     PRIMARY KEY(token),
 );

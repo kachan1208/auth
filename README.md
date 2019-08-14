@@ -34,7 +34,7 @@ Performs auth operation by basic token.
 
 ```
 HTTP Request method    POST
-Request URL            /token/auth HTTP/2.0
+Request URL            /v1/token/auth HTTP/2.0
 Headers                Authorization: {token}
 ```
 
@@ -47,7 +47,7 @@ Content-Type: application/json
 Account-Id: {account_id}
 ```
 
-### POST /token
+### POST /v1/token
 Performs create operation for basic tokens.
 
 **Request info**
@@ -73,7 +73,7 @@ Content-Type: application/json
 }
 ```
 
-### DELETE /token/{id}
+### DELETE /v1/token/{id}
 Performs token delete operation.
 
 **Request info**
@@ -91,15 +91,22 @@ Headers                Account-Id: {account_id}
 HTTP/1.1 200 OK
 ```
 
-### POST /token/{id}/disable
-Performs token disabling operation.
+### PUT /v1/token/{id}
+Performs token update operation.
 
 **Request info**
 
 ```
-HTTP Request method    POST
-Request URL            /token/{id}/disable HTTP/2.0
+HTTP Request method    PUT
+Request URL            /v1/token/{id} HTTP/2.0
 Headers                Account-Id: {account_id}
+```
+
+**Request body**
+```json
+{
+    "is_enabled": false,
+}
 ```
 
 - `Account-Id` - user id
@@ -109,14 +116,14 @@ Headers                Account-Id: {account_id}
 HTTP/1.1 200 OK
 ```
 
-### GET /token/{id}
+### GET /v1/token/{id}
 Performs token get operation.
 
 **Request info**
 
 ```
 HTTP Request method    GET
-Request URL            /token/{id} HTTP/2.0
+Request URL            /v1/token/{id} HTTP/2.0
 Headers                Account-Id: {account_id}
 ```
 
@@ -134,14 +141,14 @@ HTTP/1.1 200 OK
 }
 ```
 
-### GET /token/list
+### GET /v1/token/list
 Performs get token list by account.
 
 **Request info**
 
 ```
 HTTP Request method    GET
-Request URL            /token/list HTTP/2.0
+Request URL            /v1/token/list HTTP/2.0
 Headers                Account-Id: {account_id}
 ```
 
