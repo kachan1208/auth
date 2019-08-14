@@ -2,12 +2,12 @@
 * [Dependencies](#dependencies)
 * [Settings](#settings)
 * [Endpoints](#endpoints)
-    * [POST /token/auth](#post-tokenauth)
-    * [POST /token](#post-token)
-    * [GET /token/{id}](#get-tokenid)
-    * [DELETE /token/{id}](#delete-tokenid)
-    * [POST /token/{id}/disable](#post-tokeniddisable)
-    * [GET /token/list](#get-tokenlist)
+    * [POST /v1/token/auth](#post-v1tokenauth)
+    * [POST /v1/token](#post-v1token)
+    * [GET /v1/token/{id}](#get-v1tokenid)
+    * [DELETE /v1/token/{id}](#delete-v1tokenid)
+    * [POST /v1/token/{id}/disable](#post-v1tokeniddisable)
+    * [GET /v1/token/list](#get-v1tokenlist)
 * [Service Endpoints](#service-endpoints)
     * [GET /health](#get-health)
 * [Errors](#errors)
@@ -27,7 +27,7 @@
  AUTH_CASSANDRA_KEYSPACE | cassandra keyspace
 
 ## Endpoints
-### POST /token/auth
+### POST /v1/token/auth
 Performs auth operation by basic token.
 
 **Request info**
@@ -54,7 +54,7 @@ Performs create operation for basic tokens.
 
 ```
 HTTP Request method    POST
-Request URL            /token HTTP/2.0
+Request URL            /v1/token HTTP/2.0
 Headers                Account-Id: {account_id}
 ```
 
@@ -80,7 +80,7 @@ Performs token delete operation.
 
 ```
 HTTP Request method    DELETE
-Request URL            /token/{id} HTTP/2.0
+Request URL            /v1/token/{id} HTTP/2.0
 Headers                Account-Id: {account_id}
 ```
 
